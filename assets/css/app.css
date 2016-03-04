@@ -1,26 +1,49 @@
 body {
   font: 10px sans-serif;
 }
+
+footer {
+  clear: both;
+}
+
+/* -------------------------
+ D3 styles
+ --------------------------- */
+
 .link {
   stroke: #00CED1;
   stroke-width: 0.5px;
 }
+
 .node circle {
   cursor: move;
   fill: #ccc;
   stroke: #000;
   stroke-width: 0.5px;
 }
+
 .node.fixed {
   fill: #f00;
 }
-#graph {
+
+text {
+  font: 10px sans-serif;
+  pointer-events: none;
+  position: relative;
+  z-index: 1000;
+}
+
+/* D3 graphs */
+
+.d3-graph {
   height: 80vh;
 }
+
 .loading {
   font-size: 20px;
   font-family: sans-serif;
 }
+
 .popup-tip {
   padding: 2px 4px 2px 2px;
   border: solid #444 1px;
@@ -30,6 +53,11 @@ body {
   background-color: rgba(255, 255, 255, 0.85);
   font-family: sans-serif;
 }
+
+/* -------------------------
+ Custom library styles
+ --------------------------- */
+
 .noUi-handle {
   width: 10px;
   height: 5px;

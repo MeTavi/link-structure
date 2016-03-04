@@ -15,33 +15,43 @@
 
   <body>
     <div class="container-fluid">
-      <div class="page-header">
-        <h1>Visualization of the Canadian Political Parties and Political Interest Groups Link Structures</h1>
-      </div>
-      <div class="row">
-        <div class="col-md-6">
-          <label for="threshold-nodes">
-            Max number of sites to display
-          </label>
-          <div id="threshold-slider"></div>
+      <header>
+        <div class="page-header">
+          <h1>Visualization of the Canadian Political Parties and Political Interest Groups Link Structures</h1>
         </div>
-        <div class="col-md-6">
-          <label for="threshold-nodes">
-            Year
-          </label>
-          <div id="date-slider"></div>
+      </header>
+
+      <section>
+        <div class="row">
+          <div class="col-md-6">
+            <label for="threshold-nodes">
+              Max number of sites to display
+            </label>
+            <div id="threshold-slider"></div>
+          </div>
+          <div class="col-md-6">
+            <label for="threshold-nodes">
+              Year
+            </label>
+            <div id="date-slider"></div>
+          </div>
         </div>
-      </div>
-      <div class="row">
-        <div id="display">
-          <div id="graph"></div>
-          <p>This visualization was created with d3, based on
-            <a href="http://bl.ocks.org/mbostock/3750558">this example</a>
-            and
-            <a href="http://bl.ocks.org/mbostock/2706022">this example</a>. The raw data for this visualization comes from the output of a
-            <a href="https://github.com/lintool/warcbase/wiki/Pig:-Analysis-of-Site-Link-Structure">Pig script</a>.</p>
+        <div class="row">
+          <div id="display">
+            <div id="graph" class="d3-graph"></div>
+          </div>
         </div>
-      </div>
+      </section>
+
+      <footer class="affix-bottom">
+        <p>
+          This visualization was created with d3, based on
+          <a href="http://bl.ocks.org/mbostock/3750558">this example</a>
+          and
+          <a href="http://bl.ocks.org/mbostock/2706022">this example</a>. The raw data for this visualization comes from the output of a
+          <a href="https://github.com/lintool/warcbase/wiki/Pig:-Analysis-of-Site-Link-Structure">Pig script</a>.
+        </p>
+      </footer>
     </div>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
