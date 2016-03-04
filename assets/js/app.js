@@ -107,16 +107,18 @@ function start(){
   for (i=0; i < threshold && i < allNodes.length; ++i) {
     nodeNames.add(allNodes[i].name);
   }
+
+  var addLinks = function(l) {
+    if (nodeNames.has(l.target.name)){
+      if (!nodes[l.source.name]) nodes[l.source.name] = l.source;
+      if (!nodes[l.target.name]) nodes[l.target.name] = l.target;
+      links.push(l);
+    }
+  };
   for (i=0; i < threshold && i < allNodes.length; ++i) {
     var n = allNodes[i];
     n.px = n.py = i;
-    nodesToLinks[n.name].forEach(function(l) {
-      if (nodeNames.has(l.target.name)){
-        if (!nodes[l.source.name]) nodes[l.source.name] = l.source;
-        if (!nodes[l.target.name]) nodes[l.target.name] = l.target;
-        links.push(l);
-      }
-    });
+    nodesToLinks[n.name].forEach(addLinks);
   }
 
   force.nodes(d3.values(nodes))
