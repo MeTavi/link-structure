@@ -6,6 +6,8 @@
     <!-- Bootstrap -->
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
+    <!-- noUiSlider -->
+    <link rel="stylesheet" href="assets/css/lib/nouislider.min.css">
     <!-- App -->
     <link href="assets/css/app.css" rel="stylesheet">
   </head>
@@ -19,14 +21,17 @@
       </header>
 
       <section>
-        <div class="row">
+        <div class="row clearfix">
           <div class="col-md-6">
+            <label for="threshold-nodes">Max sites to display</label>
+            <div id="threshold-slider"></div>
           </div>
           <div class="col-md-6">
-          </div>
+            <label for="threshold-nodes">Year</label>
+            <div id="date-slider"></div>
         </div>
         <div class="row">
-          <div id="display">
+          <div id="display" class="col-md-12">
             <div id="graph" class="d3-graph"></div>
           </div>
         </div>
@@ -50,6 +55,8 @@
     <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js"></script>
     <script src="/assets/js/lib/d3.tip.v0.6.3.js"></script>
+    <!-- noUiSlider -->
+    <script src="/assets/js/lib/nouislider.min.js"></script>
     <!-- App -->
     <script src="/assets/js/app.js"></script>
   </body>

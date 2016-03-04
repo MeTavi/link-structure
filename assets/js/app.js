@@ -81,7 +81,7 @@ function updateGraph() {
   // force-directed layout settings
   var force = d3.layout.force()
     .size([width, height])
-    .linkStrength(0.5)
+    .linkStrength(1)
     .friction(0.01)
     .charge(-100)
     .linkDistance(width / 2)
@@ -148,6 +148,11 @@ function updateGraph() {
   force.stop();
 }
 
+function updateThreshold() {
+  rT = Math.log(threshold);
+  updateGraph();
+}
+
 d3.selection.prototype.moveToFront = function () {
   return this.each(function () {
     this.parentNode.appendChild(this);
@@ -183,16 +188,70 @@ function dblclick(d) {
   d3.select(this).classed("fixed", d.fixed = false);
 }
 
+function displayLoader() {
+  $.isLoading({text: "Loading", position: "overlay"});
+}
+
+
+// noUI sliders
+// ---------------------------------
+
+function makeDateSlider() {
+  var slider = document.getElementById('date-slider');
+  noUiSlider.create(slider, {
+    start: 0,
+    step: 1,
+    range: {
+      'min': [min_year],
+      'max': [max_year]
+    },
+    pips: {
+      mode: 'steps',
+      density: '2',
+    }
+  });
+  slider.noUiSlider.on('change', function () {
+    this_year = Math.floor(slider.noUiSlider.get());
+    updateDate();
+  });
+}
+
+function makeThresholdSlider() {
+  var thresholdSlider = document.getElementById('threshold-slider');
+  noUiSlider.create(thresholdSlider, {
+    start: 100,
+    step: 10,
+    range: {
+      'min': [0],
+      'max': [num_nodes]
+    },
+    pips: {
+      mode: 'count',
+      values: 10,
+      density: 2,
+    }
+  });
+  thresholdSlider.noUiSlider.on('change', function () {
+    displayLoader();
+    threshold = Math.floor(thresholdSlider.noUiSlider.get());
+    updateThreshold();
+  });
+}
+
+
 
 // Load data
 // ---------------------------------
 
 // display loader
-$.isLoading({text: "Loading", position: "overlay"});
+displayLoader();
 
 // import and process node data, then get link data
 d3.json("/data/graph.json", function (error, data) {
   if (error) throw error;
+
+  makeDateSlider();
+  makeThresholdSlider();
 
   // process nodes
   all_nodes = data.nodes;
