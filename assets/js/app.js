@@ -163,8 +163,8 @@ function update() {
     .on("dblclick", dblclick)
     .call(drag);
 
-  nodeEnter.append("circle")
-    .attr("r", 15 / parseFloat(rt));
+  node_enter.append("circle")
+    .attr("r", function(d) { return Math.log(d.count) * 0.5; });
 
   node.exit().remove();
 
