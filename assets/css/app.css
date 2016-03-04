@@ -39,11 +39,6 @@ text {
   height: 80vh;
 }
 
-.loading {
-  font-size: 20px;
-  font-family: sans-serif;
-}
-
 .popup-tip {
   padding: 2px 4px 2px 2px;
   border: solid #444 1px;
@@ -52,18 +47,4 @@ text {
   background-color: #fff;
   background-color: rgba(255, 255, 255, 0.85);
   font-family: sans-serif;
-}
-
-/* -------------------------
- Custom library styles
- --------------------------- */
-
-.noUi-handle {
-  width: 10px;
-  height: 5px;
-  background: #fff
-}
-.noUi-target {
-  height: 10px;
-  margin: 10px;
 }

@@ -19,12 +19,6 @@ var svg = graph.append("svg")
   .attr("width", width)
   .attr("height", height);
 
-var loading = svg.append("text")
-  .attr('x', width / 2)
-  .attr('y', height / 2)
-  .attr('class', 'loading')
-  .text("Simulating...");
-
 var links = svg.selectAll(".link");
 var node = svg.selectAll(".node");
 
@@ -75,8 +69,6 @@ d3.csv("data/nodes.csv", function (error, data) {
 
 function loadLinks() {
   d3.csv("data/links.csv", function (error, data) {
-    makeDateSlider();
-    makeThresholdSlider();
     max_links = data[0].count;
     all_links = data.slice();
     all_links.forEach(function(l) {
@@ -128,7 +120,6 @@ function start() {
 
   for (i = 25; i > 0; --i) force.tick();
   force.stop();
-  loading.attr("visibility", "hidden");
 }
 
 function update() {
@@ -229,47 +220,4 @@ function dragstart(d) {
 
 function dblclick(d) {
   d3.select(this).classed("fixed", d.fixed = false);
-}
-
-function makeDateSlider() {
-  var slider = document.getElementById('date-slider');
-  noUiSlider.create(slider, {
-    start: 0,
-    step: 1,
-    range: {
-      'min': [min_year],
-      'max': [max_year]
-    },
-    pips: {
-      mode: 'steps',
-      density: '2',
-    }
-  });
-  slider.noUiSlider.on('change', function () {
-    this_year = Math.floor(slider.noUiSlider.get());
-    updateDate();
-  });
-}
-
-function makeThresholdSlider() {
-  var thresholdSlider = document.getElementById('threshold-slider');
-  noUiSlider.create(thresholdSlider, {
-    start: 100,
-    step: 10,
-    range: {
-      'min': [0],
-      'max': [num_nodes]
-    },
-    pips: {
-      mode: 'count',
-      values: 10,
-      density: 2,
-    }
-  });
-  thresholdSlider.noUiSlider.on('change', function () {
-    loading.moveToFront();
-    loading.attr("visibility", "visible");
-    threshold = Math.floor(thresholdSlider.noUiSlider.get());
-    updateThreshold();
-  });
 }
