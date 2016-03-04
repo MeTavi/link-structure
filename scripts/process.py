@@ -1,11 +1,12 @@
 #!/usr/bin/python
+from collections import OrderedDict
 import json
 import operator
 import re
 import sys
 
 links = []
-nodes = {}
+nodes = OrderedDict()
 
 with open('data/raw.txt') as fp:
     for line in fp:
