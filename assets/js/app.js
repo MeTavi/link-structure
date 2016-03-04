@@ -23,6 +23,7 @@ var this_year = 2005;
 
 // setup D3 graph
 var graph = d3.select("#graph")
+  .attr("style", "width:"+width+"px;height:"+height+"px")
   .append("svg")
     .attr("width", width)
     .attr("height", height);
@@ -83,7 +84,7 @@ function updateGraph() {
     .linkStrength(0.5)
     .friction(0.01)
     .charge(-100)
-    .linkDistance(120)
+    .linkDistance(width / 2)
     .gravity(0.8)
     .theta(0.8)
     .on("tick", tick);
@@ -143,9 +144,7 @@ function updateGraph() {
 
   updateDate();
 
-  for (i = 25; i > 0; --i) {
-    force.tick();
-  }
+  for (i = 0; i < threshold; i++) { force.tick(); }
   force.stop();
 }
 
@@ -185,6 +184,9 @@ function dblclick(d) {
 }
 
 
+// Load data
+// ---------------------------------
+
 // display loader
 $.isLoading({text: "Loading", position: "overlay"});
 
@@ -194,6 +196,7 @@ d3.json("/data/metadata.json", function (error, data) {
 
   // process nodes
   all_nodes = data.nodes;
+  num_nodes = data.nodes.length;
   all_nodes.forEach(function (n) {
     node_to_links[n.name] = [];
     node_by_name[n.name] = n;

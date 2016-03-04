@@ -36,8 +36,11 @@ text {
 /* D3 graphs */
 
 .d3-graph {
+  border: 1px solid #eee;
+  border-width: 1px 0;
   height: 80vh;
-  min-height: 500px;
+  margin: 1em 0;
+  min-height: 600px;
 }
 
 
