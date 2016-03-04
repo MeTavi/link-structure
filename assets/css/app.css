@@ -1,33 +1,27 @@
 body {
   font: 10px sans-serif;
 }
-
 .link {
   stroke: #00CED1;
   stroke-width: 0.5px;
 }
-
 .node circle {
   cursor: move;
   fill: #ccc;
   stroke: #000;
   stroke-width: 0.5px;
 }
-
 .node.fixed {
   fill: #f00;
 }
-
 #graph {
-  height:80vh;
+  height: 80vh;
 }
-
 .loading {
   font-size: 20px;
   font-family: sans-serif;
 }
-
-.popup-tip{
+.popup-tip {
   padding: 2px 4px 2px 2px;
   border: solid #444 1px;
   border-radius: 6px;
@@ -36,14 +30,12 @@ body {
   background-color: rgba(255, 255, 255, 0.85);
   font-family: sans-serif;
 }
-
 .noUi-handle {
-    width: 10px;
-    height: 5px;
-    background: #fff
+  width: 10px;
+  height: 5px;
+  background: #fff
 }
-
 .noUi-target {
-    height: 10px;
-    margin: 10px;
+  height: 10px;
+  margin: 10px;
 }
