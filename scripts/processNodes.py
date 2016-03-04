@@ -11,7 +11,7 @@ class Node:
         self.name = name
         self.count = count
 
-with open('raw.txt') as fp:
+with open('data/raw.txt') as fp:
     for line in fp:
         temp = re.split("\t", line.rstrip())
         arr = []

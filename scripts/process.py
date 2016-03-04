@@ -7,13 +7,13 @@ import sys
 data = set()
 
 class Link:
-    def __init__(self, date, source, target, count): 
+    def __init__(self, date, source, target, count):
             self.date=date
             self.source=source
             self.target=target
             self.count=count
 
-with open('raw.txt') as fp:
+with open('data/raw.txt') as fp:
 
   for line in fp:
     temp = re.split("\t", line.rstrip())
@@ -40,4 +40,3 @@ for link in data:
   sys.stdout.write(",")
   sys.stdout.write(str(link.count))
   sys.stdout.write("\n")
-

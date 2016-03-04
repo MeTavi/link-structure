@@ -1,8 +1,8 @@
-To view the visualization, enter data into raw.txt and run 
+To view the visualization, enter data into raw.txt and run
 
 ```
-python process.py > links.csv
-python processNodes.py > nodes.csv
+python scripts/process.py > data/links.csv
+python scripts/processNodes.py > data/nodes.csv
 ```
 
 then type:
