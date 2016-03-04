@@ -14,21 +14,21 @@ class Node:
 
 with open('data/raw.txt') as fp:
     for line in fp:
-        temp = re.split("\t", line.rstrip())
-        arr = []
-        for idx, val in enumerate(temp):
-            arr.append(val.replace(" ", ""))
-        sourceName = arr[1]
-        destName = arr[2]
+        values = re.split("\t", line.rstrip())
+        arr = [v.replace(" ", "") for v in values]
+        source_name = arr[1]
+        dest_name = arr[2]
         count = int(arr[3])
-        if sourceName in nodes:
-            nodes[sourceName].count += count
+
+        if source_name in nodes:
+            nodes[source_name].count += count
         else:
-            nodes[sourceName] = Node(sourceName, count)
-        if destName in nodes:
-            nodes[destName].count += count
+            nodes[source_name] = Node(source_name, count)
+
+        if dest_name in nodes:
+            nodes[dest_name].count += count
         else:
-            nodes[destName] = Node(destName, count)
+            nodes[dest_name] = Node(dest_name, count)
 
 sys.stdout.write("name")
 sys.stdout.write(",")

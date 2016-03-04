@@ -1,5 +1,4 @@
 #!/usr/bin/python
-
 import re
 import operator
 import sys
@@ -18,10 +17,8 @@ class Link:
 with open('data/raw.txt') as fp:
 
     for line in fp:
-        temp = re.split("\t", line.rstrip())
-        arr = []
-        for idx, val in enumerate(temp):
-            arr.append(val.replace(" ", ""))
+        values = re.split("\t", line.rstrip())
+        arr = [v.replace(" ", "") for v in values]
         link = Link(arr[0][:4], arr[1], arr[2], int(arr[3]))
         data.add(link)
 
