@@ -163,8 +163,19 @@ function update() {
     .on("dblclick", dblclick)
     .call(drag);
 
+  // set node size
   node_enter.append("circle")
-    .attr("r", function(d) { return Math.log(d.count) * 0.5; });
+      .attr("r", function(d) { return Math.log(d.count) * 0.5; });
+
+  // add node name
+  node.append("text")
+      .attr("x", 12)
+      .attr("dy", ".35em")
+      .attr("style", function(d) {
+        var font_size = Math.floor(Math.log(d.count));
+        return "font-size:" + font_size + "px";
+      })
+      .text(function(d) { return d.name; });
 
   node.exit().remove();
 
