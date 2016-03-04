@@ -42,5 +42,5 @@ data = {
     "links": links,
     "nodes": [{"name": k, "count": nodes[k]} for k in nodes.keys()]
 }
-with open('data/metadata.json', 'w') as outfile:
+with open('data/graph.json', 'w') as outfile:
     json.dump(data, outfile, indent=2)

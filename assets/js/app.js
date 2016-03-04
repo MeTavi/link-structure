@@ -191,7 +191,7 @@ function dblclick(d) {
 $.isLoading({text: "Loading", position: "overlay"});
 
 // import and process node data, then get link data
-d3.json("/data/metadata.json", function (error, data) {
+d3.json("/data/graph.json", function (error, data) {
   if (error) throw error;
 
   // process nodes
