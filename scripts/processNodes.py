@@ -1,15 +1,16 @@
 #!/usr/bin/python
-
 import re
 import operator
 import sys
 
 nodes = {}
 
+
 class Node:
     def __init__(self, name, count):
         self.name = name
         self.count = count
+
 
 with open('data/raw.txt') as fp:
     for line in fp:
