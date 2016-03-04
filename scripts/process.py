@@ -1,41 +1,45 @@
 #!/usr/bin/python
-import re
+import json
 import operator
+import re
 import sys
 
-data = set()
-
-
-class Link:
-    def __init__(self, date, source, target, count):
-        self.date = date
-        self.source = source
-        self.target = target
-        self.count = count
-
+links = []
+nodes = {}
 
 with open('data/raw.txt') as fp:
-
     for line in fp:
         values = re.split("\t", line.rstrip())
         arr = [v.replace(" ", "") for v in values]
-        link = Link(arr[0][:4], arr[1], arr[2], int(arr[3]))
-        data.add(link)
 
-sys.stdout.write("date")
-sys.stdout.write(",")
-sys.stdout.write("source")
-sys.stdout.write(",")
-sys.stdout.write("target")
-sys.stdout.write(",")
-sys.stdout.write("count\n")
+        date = arr[0][:4]
+        source = arr[1]
+        target = arr[2]
+        count = int(arr[3])
 
-for link in data:
-    sys.stdout.write(str(link.date))
-    sys.stdout.write(",")
-    sys.stdout.write(link.source)
-    sys.stdout.write(",")
-    sys.stdout.write(link.target)
-    sys.stdout.write(",")
-    sys.stdout.write(str(link.count))
-    sys.stdout.write("\n")
+        # create link
+        link = {
+            "date": date,
+            "source": source,
+            "target": target,
+            "count": count
+        }
+        links.append(link)
+
+        # create node (combining counts from sources and targets)
+        if source in nodes:
+            nodes[source] += count
+        else:
+            nodes[source] = count
+
+        if target in nodes:
+            nodes[target] += count
+        else:
+            nodes[target] = count
+
+data = {
+    "links": links,
+    "nodes": [{"name": k, "count": nodes[k]} for k in nodes.keys()]
+}
+with open('data/metadata.json', 'w') as outfile:
+    json.dump(data, outfile, indent=2)
