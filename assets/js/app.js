@@ -81,8 +81,8 @@ function updateGraph() {
   var force = d3.layout.force()
     .size([width, height])
     .linkStrength(0.5)
-    .friction(0.1)
-    .charge(-200)
+    .friction(0.01)
+    .charge(-100)
     .linkDistance(120)
     .gravity(0.8)
     .theta(0.8)
@@ -94,7 +94,6 @@ function updateGraph() {
   force.nodes(d3.values(nodes))
     .links(node_links)
     .start();
-
 
   links = links.data(force.links());
   links_data = links.data(force.links());
@@ -144,7 +143,9 @@ function updateGraph() {
 
   updateDate();
 
-  for (i = 25; i > 0; --i) force.tick();
+  for (i = 25; i > 0; --i) {
+    force.tick();
+  }
   force.stop();
 }
 
@@ -196,6 +197,7 @@ $.isLoading({text: "Loading", position: "overlay"});
 
 // import and process node data, then get link data
 d3.json("/data/metadata.json", function (error, data) {
+  if (error) throw error;
 
   // process nodes
   all_nodes = data.nodes;
