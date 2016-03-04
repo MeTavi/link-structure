@@ -37,6 +37,7 @@ text {
 
 .d3-graph {
   height: 80vh;
+  min-height: 300px;
 }
 
 

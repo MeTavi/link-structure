@@ -1,26 +1,9 @@
+// Global variables
+// ---------------------------------
+
+// TODO: this better
 var width = document.getElementById("graph").offsetWidth;
 var height = document.getElementById("graph").offsetHeight;
-
-var force = d3.layout.force()
-  .size([width, height])
-  .linkStrength(0.5)
-  .friction(0.1)
-  .charge(-200)
-  .linkDistance(120)
-  .gravity(0.8)
-  .theta(0.8)
-  .on("tick", tick);
-
-var drag = force.drag()
-  .on("dragstart", dragstart);
-
-var graph = d3.select("#graph")
-  .append("svg")
-    .attr("width", width)
-    .attr("height", height);
-
-var links = graph.selectAll(".link");
-var node = graph.selectAll(".node");
 
 var all_links = [];
 var all_nodes = [];
@@ -37,6 +20,15 @@ var num_nodes = 1;
 var min_year = 2005;
 var max_year = 2009;
 var this_year = 2005;
+
+// setup D3 graph
+var graph = d3.select("#graph")
+  .append("svg")
+    .attr("width", width)
+    .attr("height", height);
+
+var links = graph.selectAll(".link");
+var node = graph.selectAll(".node");
 
 // D3 tooltips
 var nodetip = d3.tip()
@@ -58,11 +50,12 @@ var linktip = d3.tip()
 graph.call(nodetip);
 graph.call(linktip);
 
+
 // Functions
 // ---------------------------------
 
 function updateGraph() {
-  var links = [];
+  var node_links = [];
   var nodes = {};
 
   var node_names = new Set();
@@ -75,7 +68,7 @@ function updateGraph() {
     if (node_names.has(l.target.name)) {
       if (!nodes[l.source.name]) nodes[l.source.name] = l.source;
       if (!nodes[l.target.name]) nodes[l.target.name] = l.target;
-      links.push(l);
+      node_links.push(l);
     }
   };
   for (i = 0; i < threshold && i < all_nodes.length; ++i) {
@@ -84,26 +77,33 @@ function updateGraph() {
     node_to_links[n.name].forEach(addLinks);
   }
 
+  // force-directed layout settings
+  var force = d3.layout.force()
+    .size([width, height])
+    .linkStrength(0.5)
+    .friction(0.1)
+    .charge(-200)
+    .linkDistance(120)
+    .gravity(0.8)
+    .theta(0.8)
+    .on("tick", tick);
+
+  var drag = force.drag()
+    .on("dragstart", dragstart);
+
   force.nodes(d3.values(nodes))
-    .links(links)
+    .links(node_links)
     .start();
 
-  update();
 
-  for (i = 25; i > 0; --i) force.tick();
-  force.stop();
-}
-
-function update() {
   links = links.data(force.links());
+  links_data = links.data(force.links());
 
   links.enter().append("line")
     .attr("stroke-opacity", function (d) {
       return Math.log(d.count) / Math.log(max_links);
     })
-    .attr("class", function (d) {
-      return "link date" + d.date;
-    })
+    .attr("class", function (d) { return "link date" + d.date; })
     .on("mouseover", linktip.show)
     .on("mouseout", linktip.hide);
 
@@ -116,9 +116,7 @@ function update() {
       node_to_links[d.name].forEach(function (l) {
         dates.add(l.date);
       });
-      dates.forEach(function (year) {
-        s += "date" + year + " ";
-      });
+      dates.forEach(function (year) { s += "date" + year + " "; });
       return s;
     })
     .on("mouseover", nodetip.show)
@@ -142,9 +140,12 @@ function update() {
 
   node.exit().remove();
 
-  links.exit().remove();
+  links_data.exit().remove();
 
   updateDate();
+
+  for (i = 25; i > 0; --i) force.tick();
+  force.stop();
 }
 
 d3.selection.prototype.moveToFront = function () {
@@ -217,9 +218,10 @@ function loadLinks() {
   });
 }
 
+
 // When page is ready...
 (function($, window) {
-  // show loading
+  // display loader
   $.isLoading({text: "Loading", position: "overlay"});
 
   // import and process node data, then get link data
