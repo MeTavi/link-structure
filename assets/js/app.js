@@ -28,22 +28,21 @@ var loading = svg.append("text")
 var link = svg.selectAll(".link");
 var node = svg.selectAll(".node");
 
-var allLinks = [];
-var allNodes = [];
+var all_links = [];
+var all_nodes = [];
 
-var nodesToLinks = {};
-var nodesByName = {};
+var node_to_links = {};
+var node_by_name = {};
 
 var threshold = 100;
-var rT = Math.log(threshold);
+var rt = Math.log(threshold);
 
-var maxLinks = 1;
-var numNodes = 1;
+var max_links = 1;
+var num_nodes = 1;
 
-var minYear = 2005;
-var maxYear = 2009;
-
-var thisYear = 2005;
+var min_year = 2005;
+var max_year = 2009;
+var this_year = 2005;
 
 var nodetip = d3.tip()
   .attr('class', 'd3-tip')
@@ -65,12 +64,12 @@ svg.call(nodetip);
 svg.call(linktip);
 
 d3.csv("data/nodes.csv", function (error, data) {
-  allNodes = data.slice();
-  allNodes.forEach(function (n) {
-    nodesToLinks[n.name] = [];
-    nodesByName[n.name] = n;
+  all_nodes = data.slice();
+  all_nodes.forEach(function (n) {
+    node_to_links[n.name] = [];
+    node_by_name[n.name] = n;
   });
-  numNodes = allNodes.length;
+  num_nodes = all_nodes.length;
   loadLinks();
 });
 
@@ -78,20 +77,20 @@ function loadLinks() {
   d3.csv("data/links.csv", function (error, data) {
     makeDateSlider();
     makeThresholdSlider();
-    maxLinks = data[0].count;
-    allLinks = data.slice();
-    allLinks.forEach(function (l) {
+    max_links = data[0].count;
+    all_links = data.slice();
+    all_links.forEach(function (l) {
       var sourceString = l.source;
       var targetString = l.target;
-      l.source = nodesByName[sourceString];
-      l.target = nodesByName[targetString];
-      nodesToLinks[sourceString].push(l);
+      l.source = node_by_name[sourceString];
+      l.target = node_by_name[targetString];
+      node_to_links[sourceString].push(l);
       if (sourceString != targetString) {
         var l2 = JSON.parse(JSON.stringify(l));
-        l2.source = nodesByName[targetString];
-        l2.target = nodesByName[sourceString];
+        l2.source = node_by_name[targetString];
+        l2.target = node_by_name[sourceString];
         l2.date = l.date;
-        nodesToLinks[targetString].push(l2);
+        node_to_links[targetString].push(l2);
       }
     });
     start();
@@ -103,23 +102,23 @@ function start() {
     var links = [];
     var nodes = {};
 
-    var nodeNames = new Set();
+    var node_names = new Set();
     var i;
-    for (i = 0; i < threshold && i < allNodes.length; ++i) {
-      nodeNames.add(allNodes[i].name);
+    for (i = 0; i < threshold && i < all_nodes.length; ++i) {
+      node_names.add(all_nodes[i].name);
     }
 
     var addLinks = function (l) {
-      if (nodeNames.has(l.target.name)) {
+      if (node_names.has(l.target.name)) {
         if (!nodes[l.source.name]) nodes[l.source.name] = l.source;
         if (!nodes[l.target.name]) nodes[l.target.name] = l.target;
         links.push(l);
       }
     };
-    for (i = 0; i < threshold && i < allNodes.length; ++i) {
-      var n = allNodes[i];
+    for (i = 0; i < threshold && i < all_nodes.length; ++i) {
+      var n = all_nodes[i];
       n.px = n.py = i;
-      nodesToLinks[n.name].forEach(addLinks);
+      node_to_links[n.name].forEach(addLinks);
     }
 
     force.nodes(d3.values(nodes))
@@ -139,7 +138,7 @@ function update() {
 
   link.enter().append("line")
     .attr("stroke-opacity", function (d) {
-      return Math.log(d.count) / Math.log(maxLinks);
+      return Math.log(d.count) / Math.log(max_links);
     })
     .attr("class", function (d) {
       return "link date" + d.date;
@@ -151,7 +150,7 @@ function update() {
     .attr("class", function (d) {
       var dates = new Set();
       var s = "node ";
-      nodesToLinks[d.name].forEach(function (l) {
+      node_to_links[d.name].forEach(function (l) {
         dates.add(l.date);
       });
       dates.forEach(function (year) {
@@ -165,7 +164,7 @@ function update() {
     .call(drag);
 
   nodeEnter.append("circle")
-    .attr("r", 15 / parseFloat(rT));
+    .attr("r", 15 / parseFloat(rt));
 
   node.exit().remove();
 
@@ -180,7 +179,7 @@ d3.selection.prototype.moveToFront = function () {
 };
 
 function updateThreshold() {
-  rT = Math.log(threshold);
+  rt = Math.log(threshold);
   start();
 }
 
@@ -189,7 +188,7 @@ function updateDate() {
     .attr("visibility", "hidden");
   d3.selectAll(".node")
     .attr("visibility", "hidden");
-  d3.selectAll(".date" + thisYear)
+  d3.selectAll(".date" + this_year)
     .attr("visibility", "visible");
 }
 
@@ -226,8 +225,8 @@ function makeDateSlider() {
     start: 0,
     step: 1,
     range: {
-      'min': [minYear],
-      'max': [maxYear]
+      'min': [min_year],
+      'max': [max_year]
     },
     pips: {
       mode: 'steps',
@@ -235,7 +234,7 @@ function makeDateSlider() {
     }
   });
   slider.noUiSlider.on('change', function () {
-    thisYear = Math.floor(slider.noUiSlider.get());
+    this_year = Math.floor(slider.noUiSlider.get());
     updateDate();
   });
 }
@@ -247,7 +246,7 @@ function makeThresholdSlider() {
     step: 10,
     range: {
       'min': [0],
-      'max': [numNodes]
+      'max': [num_nodes]
     },
     pips: {
       mode: 'count',
