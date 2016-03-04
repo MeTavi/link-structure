@@ -38,6 +38,7 @@ var min_year = 2005;
 var max_year = 2009;
 var this_year = 2005;
 
+// D3 tooltips
 var nodetip = d3.tip()
   .attr('class', 'd3-tip')
   .offset([-10, 0])
@@ -57,39 +58,10 @@ var linktip = d3.tip()
 graph.call(nodetip);
 graph.call(linktip);
 
-d3.csv("data/nodes.csv", function (error, data) {
-  all_nodes = data.slice();
-  all_nodes.forEach(function (n) {
-    node_to_links[n.name] = [];
-    node_by_name[n.name] = n;
-  });
-  num_nodes = all_nodes.length;
-  loadLinks();
-});
+// Functions
+// ---------------------------------
 
-function loadLinks() {
-  d3.csv("data/links.csv", function (error, data) {
-    max_links = data[0].count;
-    all_links = data.slice();
-    all_links.forEach(function(l) {
-      var sourceString = l.source;
-      var targetString = l.target;
-      l.source = node_by_name[sourceString];
-      l.target = node_by_name[targetString];
-      node_to_links[sourceString].push(l);
-      if (sourceString != targetString) {
-        var l2 = JSON.parse(JSON.stringify(l));
-        l2.source = node_by_name[targetString];
-        l2.target = node_by_name[sourceString];
-        l2.date = l.date;
-        node_to_links[targetString].push(l2);
-      }
-    });
-    start();
-  });
-}
-
-function start() {
+function updateGraph() {
   var links = [];
   var nodes = {};
 
@@ -181,11 +153,6 @@ d3.selection.prototype.moveToFront = function () {
   });
 };
 
-function updateThreshold() {
-  rt = Math.log(threshold);
-  start();
-}
-
 function updateDate() {
   d3.selectAll(".link")
     .attr("visibility", "hidden");
@@ -221,3 +188,53 @@ function dragstart(d) {
 function dblclick(d) {
   d3.select(this).classed("fixed", d.fixed = false);
 }
+
+// import and process link data
+function loadLinks() {
+  $.isLoading({text: "Loading", position: "overlay"});
+
+  d3.csv("/data/links.csv", function (error, data) {
+    max_links = data[0].count;
+    all_links = data.slice();
+    all_links.forEach(function(l) {
+      var source_str = l.source;
+      var target_str = l.target;
+      l.source = node_by_name[source_str];
+      l.target = node_by_name[target_str];
+      node_to_links[source_str].push(l);
+      if (source_str != target_str) {
+        var l2 = JSON.parse(JSON.stringify(l));
+        l2.source = node_by_name[target_str];
+        l2.target = node_by_name[source_str];
+        l2.date = l.date;
+        node_to_links[target_str].push(l2);
+      }
+    });
+
+    updateGraph();
+
+    $.isLoading("hide");
+  });
+}
+
+// When page is ready...
+(function($, window) {
+  // show loading
+  $.isLoading({text: "Loading", position: "overlay"});
+
+  // import and process node data, then get link data
+  d3.csv("/data/nodes.csv", function (error, data) {
+
+    all_nodes = data.slice();
+    all_nodes.forEach(function (n) {
+      node_to_links[n.name] = [];
+      node_by_name[n.name] = n;
+    });
+    num_nodes = all_nodes.length;
+
+    loadLinks();
+
+    $.isLoading("hide");
+  });
+
+}).call(this, jQuery, window);

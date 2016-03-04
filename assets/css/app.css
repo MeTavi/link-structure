@@ -39,6 +39,13 @@ text {
   height: 80vh;
 }
 
+
+/* -------------------------
+ Customized plugin styles
+ --------------------------- */
+
+/* D3 tip plugin */
+
 .popup-tip {
   padding: 2px 4px 2px 2px;
   border: solid #444 1px;
@@ -47,4 +54,26 @@ text {
   background-color: #fff;
   background-color: rgba(255, 255, 255, 0.85);
   font-family: sans-serif;
+}
+
+ /* jQuery isLoading plugin */
+
+.isloading-overlay {
+  position: relative;
+  text-align: center;
+}
+.isloading-overlay .isloading-wrapper {
+  -webkit-border-radius: 7px;
+  -webkit-background-clip: padding-box;
+  -moz-border-radius: 7px;
+  -moz-background-clip: padding;
+  border-radius: 7px;
+  background-clip: padding-box;
+
+  background: #fff;
+  display: inline-block;
+  margin: 0 auto;
+  padding: 10px 20px;
+  top: 10%;
+  z-index: 9000;
 }
