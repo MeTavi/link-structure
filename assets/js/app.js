@@ -14,13 +14,13 @@ var force = d3.layout.force()
 var drag = force.drag()
   .on("dragstart", dragstart);
 
-var graph = d3.select("#graph");
-var svg = graph.append("svg")
-  .attr("width", width)
-  .attr("height", height);
+var graph = d3.select("#graph")
+  .append("svg")
+    .attr("width", width)
+    .attr("height", height);
 
-var links = svg.selectAll(".link");
-var node = svg.selectAll(".node");
+var links = graph.selectAll(".link");
+var node = graph.selectAll(".node");
 
 var all_links = [];
 var all_nodes = [];
@@ -54,8 +54,8 @@ var linktip = d3.tip()
       "target: " + l.target.name + "<br>" + "year: " + l.date +
       "<br>" + "count: " + l.count + "<br>" + "</div>";
   });
-svg.call(nodetip);
-svg.call(linktip);
+graph.call(nodetip);
+graph.call(linktip);
 
 d3.csv("data/nodes.csv", function (error, data) {
   all_nodes = data.slice();
