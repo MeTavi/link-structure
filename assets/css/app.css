@@ -11,23 +11,22 @@ footer {
  --------------------------- */
 
 .link {
-  stroke: #00CED1;
+  stroke: #2f9e9e;
   stroke-width: 0.5px;
 }
 
 .node circle {
   cursor: move;
   fill: #ccc;
-  stroke: #000;
-  stroke-width: 0.5px;
+  stroke: #999;
+  stroke-width: 1px;
 }
 
 .node.fixed {
   fill: #f00;
 }
 
-text {
-  font: 10px sans-serif;
+.node text {
   pointer-events: none;
   position: relative;
   z-index: 1000;
