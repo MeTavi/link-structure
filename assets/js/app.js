@@ -19,7 +19,6 @@ var num_nodes = 1;
 
 var min_year = 2005;
 var max_year = 2009;
-var this_year = 2005;
 
 // setup D3 graph
 var graph = d3.select("#graph")
@@ -43,8 +42,7 @@ var drag = force.drag()
 // graph controls
 var min_zoom = 0.1;
 var max_zoom = 7;
-var zoom = d3.behavior.zoom().scaleExtent([min_zoom,max_zoom])
-
+var zoom = d3.behavior.zoom().scaleExtent([min_zoom,max_zoom]);
 
 // D3 tooltips
 var nodetip = d3.tip()
@@ -156,6 +154,8 @@ function updateGraph() {
 
   for (i = 0; i < threshold; i++) { force.tick(); }
   force.stop();
+
+  $.isLoading("hide");
 }
 
 function updateThreshold() {
@@ -169,13 +169,20 @@ d3.selection.prototype.moveToFront = function () {
   });
 };
 
-function updateDate() {
+function updateDate(years) {
+  // hide all links and nodes
   d3.selectAll(".link")
     .attr("visibility", "hidden");
   d3.selectAll(".node")
     .attr("visibility", "hidden");
-  d3.selectAll(".date" + this_year)
-    .attr("visibility", "visible");
+
+  // re-show links and nodes from selected years
+  var year_range = _.range(min_year, max_year + 1);
+  console.log(year_range);
+  year_range.forEach(function(year) {
+    d3.selectAll(".date" + year)
+      .attr("visibility", "visible");
+  });
 }
 
 function tick() {
@@ -209,7 +216,8 @@ function displayLoader() {
 function makeDateSlider() {
   var slider = document.getElementById('date-slider');
   noUiSlider.create(slider, {
-    start: 0,
+    start: [min_year, max_year],
+    connect: true,
     step: 1,
     range: {
       'min': [min_year],
@@ -220,8 +228,9 @@ function makeDateSlider() {
       density: '2',
     }
   });
-  slider.noUiSlider.on('change', function () {
-    this_year = Math.floor(slider.noUiSlider.get());
+  slider.noUiSlider.on('change', function (values, handle) {
+    min_year = parseInt(values[0]);
+    max_year = parseInt(values[1]);
     updateDate();
   });
 }
@@ -260,9 +269,6 @@ displayLoader();
 d3.json("/data/graph.json", function (error, data) {
   if (error) throw error;
 
-  makeDateSlider();
-  makeThresholdSlider();
-
   // process nodes
   all_nodes = data.nodes;
   num_nodes = all_nodes.length;
@@ -289,5 +295,7 @@ d3.json("/data/graph.json", function (error, data) {
 
   updateGraph();
 
-  $.isLoading("hide");
+  makeDateSlider();
+  makeThresholdSlider();
+
 });
