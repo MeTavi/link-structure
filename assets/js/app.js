@@ -32,8 +32,7 @@ var node = graph.selectAll(".node");
 // force-directed layout settings
 var force = d3.layout.force()
     .size([width, height])
-    .chargeDistance(height / 10)
-    .friction(0.02);
+    .friction(0.2);
 
 var drag = force.drag()
   .on("dragstart", dragstart);
@@ -76,19 +75,26 @@ graph.call(linktip);
 // Functions
 // ---------------------------------
 
+function displayLoader() {
+  $.isLoading({text: "Loading", position: "overlay"});
+}
+function hideLoader() {
+  $.isLoading("hide");
+}
+
 function updateGraph() {
   var node_links = [];
   var nodes = {};
   var i;
 
-  // configure links and nodes to display
+  // select links and nodes to display
   var node_names = new Set();
   for (i = 0; i < threshold && i < all_nodes.length; ++i) {
     node_names.add(all_nodes[i].name);
   }
 
   var addLinks = function (l) {
-    if (node_names.has(l.target.name)) {
+    if (node_names.has(l.target.name) && node_names.has(l.source.name)) {
       if (!nodes[l.source.name]) {
         nodes[l.source.name] = l.source;
       }
@@ -100,7 +106,15 @@ function updateGraph() {
   };
   for (i = 0; i < threshold && i < all_nodes.length; ++i) {
     var n = all_nodes[i];
-    n.px = n.py = i;
+    n.index = i;
+
+    if (i === 0) {
+      // center first node
+      n.x = (width / 2);
+      n.y = (height / 2);
+      n.fixed = true;
+    }
+
     node_to_links[n.name].forEach(addLinks);
   }
 
@@ -108,9 +122,8 @@ function updateGraph() {
   force.nodes(d3.values(nodes))
     .links(node_links)
     .linkStrength(function(l) { return Math.log(l.count) * 0.2; })
-    .linkDistance(function(l) { return Math.log(l.count) * 10; })
-    .gravity(function(l) { return Math.log(l.count) * 500; })
-    .charge(function(l) { return Math.log(l.count) * -5; })
+    .charge(function(l) { return Math.log(l.count) * -250; })
+    .gravity(function(l) { return Math.log(l.count) * 1; })
     .on("tick", tick)
     .start();
 
@@ -143,7 +156,13 @@ function updateGraph() {
 
   // set node size
   node_enter.append("circle")
-      .attr("r", function(d) { return Math.log(d.count) * 5; });
+    .attr("style", function(d) {
+      var random_hue = _.sample(_.range(0, 256));
+      return "fill: hsl(" + random_hue + ", 100%, 60%)";
+    })
+    .attr("r", function(d) {
+      return 1 + d.pageRank * Math.log(d.count) * 20;
+    });
 
   // add node name
   node.append("text")
@@ -163,7 +182,7 @@ function updateGraph() {
 
   updateDate();
 
-  for (i = 0; i < 15; i++) { force.tick(); }
+  for (i = 0; i < threshold && i < 1000; i++) { force.tick(); }
   force.stop();
 
   hideLoader();
@@ -210,13 +229,6 @@ function dragstart(d) {
 
 function dblclick(d) {
   d3.select(this).classed("fixed", d.fixed = false);
-}
-
-function displayLoader() {
-  $.isLoading({text: "Loading", position: "overlay"});
-}
-function hideLoader() {
-  $.isLoading("hide");
 }
 
 
@@ -286,6 +298,7 @@ d3.json("/data/graph.json", function (error, data) {
   nodes.forEach(function (n) {
     n.name = n.domain;
     n.count = n.inDegree + n.outDegree;
+    n.weight = n.count;
 
     node_to_links[n.name] = [];
     node_by_name[n.name] = n;
