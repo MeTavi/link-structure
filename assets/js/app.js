@@ -31,6 +31,21 @@ var graph = d3.select("#graph")
 var links = graph.selectAll(".link");
 var node = graph.selectAll(".node");
 
+// force-directed layout settings
+var force = d3.layout.force()
+    .size([width, height])
+    .chargeDistance(height / 10)
+    .friction(0.02);
+
+var drag = force.drag()
+  .on("dragstart", dragstart);
+
+// graph controls
+var min_zoom = 0.1;
+var max_zoom = 7;
+var zoom = d3.behavior.zoom().scaleExtent([min_zoom,max_zoom])
+
+
 // D3 tooltips
 var nodetip = d3.tip()
   .attr('class', 'd3-tip')
@@ -78,22 +93,14 @@ function updateGraph() {
     node_to_links[n.name].forEach(addLinks);
   }
 
-  // force-directed layout settings
-  var force = d3.layout.force()
-    .size([width, height])
-    .linkStrength(1)
-    .friction(0.01)
-    .charge(-100)
-    .linkDistance(width / 2)
-    .gravity(0.8)
-    .theta(0.8)
-    .on("tick", tick);
-
-  var drag = force.drag()
-    .on("dragstart", dragstart);
-
+  // links settings
   force.nodes(d3.values(nodes))
     .links(node_links)
+    .linkStrength(function(l) { return Math.log(l.count) * 0.2; })
+    .linkDistance(function(l) { return Math.log(l.count) * 10; })
+    .gravity(function(l) { return Math.log(l.count) * 0.3; })
+    .charge(function(l) { return Math.log(l.count) * -5; })
+    .on("tick", tick)
     .start();
 
   links = links.data(force.links());
@@ -107,10 +114,10 @@ function updateGraph() {
     .on("mouseover", linktip.show)
     .on("mouseout", linktip.hide);
 
+  // node settings
   node = node.data(force.nodes());
-
   var node_enter = node.enter().append("g")
-    .attr("class", function (d) {
+    .attr("class", function(d) {
       var dates = new Set();
       var s = "node ";
       node_to_links[d.name].forEach(function (l) {
@@ -133,8 +140,11 @@ function updateGraph() {
       .attr("x", 12)
       .attr("dy", ".35em")
       .attr("style", function(d) {
+        var styles = [];
         var font_size = Math.floor(Math.log(d.count));
-        return "font-size:" + font_size + "px";
+        styles.push("font-size:" + font_size + "px");
+        styles.push("opacity:" + Math.log(d.count) * 0.05);
+        return styles.join(";");
       })
       .text(function(d) { return d.name; });
 
@@ -255,7 +265,7 @@ d3.json("/data/graph.json", function (error, data) {
 
   // process nodes
   all_nodes = data.nodes;
-  num_nodes = data.nodes.length;
+  num_nodes = all_nodes.length;
   all_nodes.forEach(function (n) {
     node_to_links[n.name] = [];
     node_by_name[n.name] = n;
