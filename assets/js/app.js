@@ -178,7 +178,6 @@ function updateDate(years) {
 
   // re-show links and nodes from selected years
   var year_range = _.range(min_year, max_year + 1);
-  console.log(year_range);
   year_range.forEach(function(year) {
     d3.selectAll(".date" + year)
       .attr("visibility", "visible");
