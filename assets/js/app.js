@@ -111,7 +111,7 @@ function updateGraph() {
     .attr("stroke-opacity", function (d) {
       return Math.log(d.count) / Math.log(max_links);
     })
-    .attr("class", function (d) { return "link year" + d.date; })
+    .attr("class", function (d) { return "link year" + d.year; })
     .on("mouseover", linktip.show)
     .on("mouseout", linktip.hide);
 
@@ -120,12 +120,12 @@ function updateGraph() {
   var node_enter = node.enter().append("g")
     .attr("class", function(d) {
       var dates = new Set();
-      var s = "node ";
+      var classes = ["node"];
       node_to_links[d.name].forEach(function (l) {
-        dates.add(l.date);
+        dates.add(l.year);
       });
-      dates.forEach(function (year) { s += "date" + year + " "; });
-      return s;
+      dates.forEach(function(year) { classes.push("year" + year); });
+      return classes.join(' ');
     })
     .on("mouseover", nodetip.show)
     .on("mouseout", nodetip.hide)
@@ -154,7 +154,7 @@ function updateGraph() {
 
   updateDate();
 
-  for (i = 0; i < 25; i++) { force.tick(); }
+  for (i = 0; i < 15; i++) { force.tick(); }
   force.stop();
 
   hideLoader();
@@ -176,9 +176,11 @@ function updateDate(years) {
   // re-show links and nodes from selected years
   var year_range = _.range(min_year, max_year + 1);
   year_range.forEach(function(year) {
-    d3.selectAll(".date" + year)
+    d3.selectAll(".year" + year)
       .attr("visibility", "visible");
   });
+
+  hideLoader();
 }
 
 function tick() {
@@ -275,6 +277,7 @@ d3.json("/data/graph.json", function (error, data) {
   nodes.forEach(function (n) {
     n.name = n.domain;
     n.count = n.inDegree + n.outDegree;
+
     node_to_links[n.name] = [];
     node_by_name[n.name] = n;
   });
@@ -286,8 +289,11 @@ d3.json("/data/graph.json", function (error, data) {
   all_links.forEach(function(l) {
     l.source = l.src;
     l.target = l.dst;
+    l.year = l.date.substr(0,4);
+
     var source_str = l.source;
     var target_str = l.target;
+
     l.source = node_by_name[source_str];
     l.target = node_by_name[target_str];
     node_to_links[source_str].push(l);
