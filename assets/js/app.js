@@ -12,7 +12,6 @@ var node_to_links = {};
 var node_by_name = {};
 
 var threshold = 100;
-var rt = Math.log(threshold);
 
 var max_links = 1;
 var num_nodes = 1;
@@ -101,7 +100,7 @@ function updateGraph() {
     .links(node_links)
     .linkStrength(function(l) { return Math.log(l.count) * 0.2; })
     .linkDistance(function(l) { return Math.log(l.count) * 10; })
-    .gravity(function(l) { return Math.log(l.count) * 0.3; })
+    .gravity(function(l) { return Math.log(l.count) * 500; })
     .charge(function(l) { return Math.log(l.count) * -5; })
     .on("tick", tick)
     .start();
@@ -155,15 +154,10 @@ function updateGraph() {
 
   updateDate();
 
-  for (i = 0; i < threshold; i++) { force.tick(); }
+  for (i = 0; i < 25; i++) { force.tick(); }
   force.stop();
 
-  $.isLoading("hide");
-}
-
-function updateThreshold() {
-  rT = Math.log(threshold);
-  updateGraph();
+  hideLoader();
 }
 
 d3.selection.prototype.moveToFront = function () {
@@ -210,6 +204,9 @@ function dblclick(d) {
 function displayLoader() {
   $.isLoading({text: "Loading", position: "overlay"});
 }
+function hideLoader() {
+  $.isLoading("hide");
+}
 
 
 // noUI sliders
@@ -231,6 +228,7 @@ function makeDateSlider() {
     }
   });
   slider.noUiSlider.on('change', function (values, handle) {
+    displayLoader();
     min_year = parseInt(values[0]);
     max_year = parseInt(values[1]);
     updateDate();
@@ -255,7 +253,7 @@ function makeThresholdSlider() {
   thresholdSlider.noUiSlider.on('change', function () {
     displayLoader();
     threshold = Math.floor(thresholdSlider.noUiSlider.get());
-    updateThreshold();
+    updateGraph();
   });
 }
 
