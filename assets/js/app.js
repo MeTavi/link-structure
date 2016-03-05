@@ -71,17 +71,22 @@ graph.call(linktip);
 function updateGraph() {
   var node_links = [];
   var nodes = {};
-
-  var node_names = new Set();
   var i;
+
+  // configure links and nodes to display
+  var node_names = new Set();
   for (i = 0; i < threshold && i < all_nodes.length; ++i) {
     node_names.add(all_nodes[i].name);
   }
 
   var addLinks = function (l) {
     if (node_names.has(l.target.name)) {
-      if (!nodes[l.source.name]) nodes[l.source.name] = l.source;
-      if (!nodes[l.target.name]) nodes[l.target.name] = l.target;
+      if (!nodes[l.source.name]) {
+        nodes[l.source.name] = l.source;
+      }
+      if (!nodes[l.target.name]) {
+        nodes[l.target.name] = l.target;
+      }
       node_links.push(l);
     }
   };
@@ -102,13 +107,12 @@ function updateGraph() {
     .start();
 
   links = links.data(force.links());
-  links_data = links.data(force.links());
 
   links.enter().append("line")
     .attr("stroke-opacity", function (d) {
       return Math.log(d.count) / Math.log(max_links);
     })
-    .attr("class", function (d) { return "link date" + d.date; })
+    .attr("class", function (d) { return "link year" + d.date; })
     .on("mouseover", linktip.show)
     .on("mouseout", linktip.hide);
 
@@ -131,7 +135,7 @@ function updateGraph() {
 
   // set node size
   node_enter.append("circle")
-      .attr("r", function(d) { return Math.log(d.count) * 0.5; });
+      .attr("r", function(d) { return Math.log(d.count) * 5; });
 
   // add node name
   node.append("text")
@@ -139,16 +143,15 @@ function updateGraph() {
       .attr("dy", ".35em")
       .attr("style", function(d) {
         var styles = [];
-        var font_size = Math.floor(Math.log(d.count));
+        var font_size = Math.log(d.count) * 5;
         styles.push("font-size:" + font_size + "px");
-        styles.push("opacity:" + Math.log(d.count) * 0.05);
+        styles.push("opacity:" + Math.log(d.count) * 0.1);
         return styles.join(";");
       })
       .text(function(d) { return d.name; });
 
   node.exit().remove();
-
-  links_data.exit().remove();
+  links.exit().remove();
 
   updateDate();
 
@@ -269,21 +272,28 @@ d3.json("/data/graph.json", function (error, data) {
   if (error) throw error;
 
   // process nodes
-  all_nodes = data.nodes;
-  num_nodes = all_nodes.length;
-  all_nodes.forEach(function (n) {
+  var nodes = data.nodes;
+  num_nodes = nodes.length;
+  nodes.forEach(function (n) {
+    n.name = n.domain;
+    n.count = n.inDegree + n.outDegree;
     node_to_links[n.name] = [];
     node_by_name[n.name] = n;
   });
+  // sort descending for threshold selecting
+  all_nodes = _.sortBy(nodes, 'count').reverse();
 
   // process link data
   all_links = data.links;
   all_links.forEach(function(l) {
+    l.source = l.src;
+    l.target = l.dst;
     var source_str = l.source;
     var target_str = l.target;
     l.source = node_by_name[source_str];
     l.target = node_by_name[target_str];
     node_to_links[source_str].push(l);
+
     if (source_str != target_str) {
       var l2 = l;
       l2.source = node_by_name[target_str];
@@ -296,5 +306,4 @@ d3.json("/data/graph.json", function (error, data) {
 
   makeDateSlider();
   makeThresholdSlider();
-
 });
