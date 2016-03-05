@@ -47,6 +47,11 @@ footer {
  Customized plugin styles
  --------------------------- */
 
+/* noUi sliders */
+.sliders > div {
+  height: 75px;
+}
+
 /* D3 tip plugin */
 
 .popup-tip {
