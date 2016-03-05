@@ -48,7 +48,13 @@ var nodetip = d3.tip()
   .attr('class', 'd3-tip')
   .offset([-10, 0])
   .html(function (d) {
-    return "<div class='popup-tip'>" + d.name + "</div>";
+    return "<div class='popup-tip'>" +
+      "Domain: " + d.name + "<br>" +
+      "PageRank: " + d.pageRank + "<br>" +
+      "Links in: " + d.inDegree + "<br>" +
+      "Links out: " + d.outDegree + "<br>" +
+      "Total links: " + d.count + "<br>" +
+    "</div>";
   });
 
 var linktip = d3.tip()
@@ -56,9 +62,12 @@ var linktip = d3.tip()
   .offset([-10, 0])
   .html(function (l) {
     return "<div class='popup-tip'>" +
-      "Link" + "<br>" + "source: " + l.source.name + "<br>" +
-      "target: " + l.target.name + "<br>" + "year: " + l.date +
-      "<br>" + "count: " + l.count + "<br>" + "</div>";
+        "Link" + "<br>" +
+        "Source: " + l.source.name + "<br>" +
+        "Target: " + l.target.name + "<br>" +
+        "Year: " + l.year + "<br>" +
+        "Count: " + l.count + "<br>" +
+      "</div>";
   });
 graph.call(nodetip);
 graph.call(linktip);
