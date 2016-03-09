@@ -1,11 +1,4 @@
-To view the visualization, enter data into raw.txt and run
-
-```
-python scripts/process.py > data/links.csv
-python scripts/processNodes.py > data/nodes.csv
-```
-
-then type:
+To view the visualization, enter JSON data into `data` directory and run
 
 ```
 python -m SimpleHTTPServer 4321
