@@ -1,4 +1,4 @@
-To view the visualization, enter JSON data into `data` directory and run
+To view the visualization, enter JSON data into `data` directory (there is already a sample `graph.json` file there, but you can replace it with your own data)  and run
 
 ```
 python -m SimpleHTTPServer 4321
